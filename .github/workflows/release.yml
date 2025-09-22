@@ -5,6 +5,7 @@ on:
       - master
       - staging
   pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -80,39 +81,5 @@ jobs:
       - name: Run Lint and Tests
         run: pnpm test:full
 
-      - name: Upload coverage reports of auto-spies-core
-        uses: codecov/codecov-action@v1
-        with:
-          file: ./packages/auto-spies-core/coverage/lcov.info
-          flags: auto-spies-core
-
-      - name: Upload coverage reports of jasmine-auto-spies
-        uses: codecov/codecov-action@v1
-        with:
-          file: ./packages/jasmine-auto-spies/coverage/lcov.info
-          flags: jasmine-auto-spies
-
-      - name: Upload coverage reports of jest-auto-spies
-        uses: codecov/codecov-action@v1
-        with:
-          file: ./packages/jest-auto-spies/coverage/lcov.info
-          flags: jest-auto-spies
-
-      - name: Configure CI Git User
-        run: |
-          git config --global user.name '@hirezio'
-          git config --global user.email 'hirezio@users.noreply.github.com'
-
       - name: Update Version
         run: pnpm lerna:version:ci
-
-      - name: Check Authentication with Registry
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        shell: bash
-        run: npm whoami
-
-      - name: Publish to npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm lerna:publish
